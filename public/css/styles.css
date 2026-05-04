@@ -110,7 +110,7 @@ body {
     display: flex;
 }
 
-.nav-dropdown:hover .dropdown-menu,
+/* .nav-dropdown:hover .dropdown-menu, */
 .nav-dropdown.active .dropdown-menu {
     visibility: visible;
     opacity: 1;
@@ -621,19 +621,25 @@ a.phone-link:hover {
         order: 4;
         flex-basis: 100%;
         max-height: 0;
-        overflow: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
         transition: max-height 0.3s ease-out;
+        scrollbar-width: none;
+    }
+
+    .nav::-webkit-scrollbar {
+        display: none;
     }
 
     .nav.active {
-        max-height: 600px;
+        max-height: 80vh;
     }
 
     .nav ul {
         flex-direction: column;
         align-items: stretch;
         gap: 0;
-        padding: 8px 0;
+        /* padding: 8px 0; */
     }
 
     .nav > ul > li {
@@ -665,30 +671,31 @@ a.phone-link:hover {
         position: static;
         box-shadow: none;
         opacity: 1;
-        visibility: visible;
+        visibility: hidden;
         max-height: 0;
-        overflow: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
         padding: 0;
-        margin-top: 8px;
-        background-color: #f5f5f5;
-        border-radius: 4px;
+        margin-top: 0;
+        background-color: transparent;
+        border-radius: 0;
         min-width: auto;
         width: 100%;
-        transition: max-height 0.3s ease, padding 0.3s ease;
-        pointer-events: auto;
+        transition: max-height 0.3s ease, padding 0.3s ease, visibility 0.3s ease;
+        pointer-events: none;
         transform: none;
         left: auto;
         top: auto;
     }
 
-    .nav-dropdown:hover .dropdown-menu {
-        max-height: 0;
-        padding: 0;
-    }
-
     .nav-dropdown.active .dropdown-menu {
-        max-height: 500px;
+        visibility: visible;
+        max-height: 400px;
         padding: 8px 0;
+        pointer-events: auto;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+        margin-top: 8px;
     }
 
     .dropdown-menu li a {
