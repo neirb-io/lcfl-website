@@ -1,6 +1,10 @@
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
+        // Skip if it's the practice areas dropdown toggle
+        if (this.parentElement.classList.contains('nav-dropdown')) {
+            return;
+        }
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
@@ -15,7 +19,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 document.addEventListener('DOMContentLoaded', function() {
     const getCurrentPage = function() {
         const path = window.location.pathname;
-        // Extract the filename from the path
         const filename = path.split('/').pop() || 'index.html';
         return filename;
     };
@@ -23,11 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const handleNavClick = function(e) {
         const href = this.getAttribute('href');
         const currentPage = getCurrentPage();
-
-        // Extract the filename from the href
         const hrefFilename = href.split('/').pop();
 
-        // If clicking a link to the current page, scroll to top instead
         if (hrefFilename === currentPage) {
             e.preventDefault();
             window.scrollTo({
@@ -35,16 +35,78 @@ document.addEventListener('DOMContentLoaded', function() {
                 behavior: 'smooth'
             });
         }
+
+        // Close mobile menu after clicking a nav link
+        closeMobileMenu();
     };
 
-    // Add click handlers to logo link
+    const closeMobileMenu = function() {
+        const nav = document.querySelector('.nav');
+        const hamburger = document.querySelector('.hamburger-btn');
+        const dropdowns = document.querySelectorAll('.nav-dropdown');
+
+        if (nav) nav.classList.remove('active');
+        if (hamburger) {
+            hamburger.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+        }
+        dropdowns.forEach(d => d.classList.remove('active'));
+    };
+
+    // Logo link
     const logoLink = document.querySelector('.logo-link');
     if (logoLink) {
         logoLink.addEventListener('click', handleNavClick);
     }
 
-    // Add click handlers to nav links (home, attorney, practice areas)
+    // Nav links to actual pages
     document.querySelectorAll('.nav a[href$=".html"]').forEach(link => {
         link.addEventListener('click', handleNavClick);
     });
+
+    // Hamburger button toggle
+    const hamburger = document.querySelector('.hamburger-btn');
+    const nav = document.querySelector('.nav');
+    if (hamburger && nav) {
+        hamburger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isActive = nav.classList.toggle('active');
+            hamburger.classList.toggle('active');
+            hamburger.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+
+            // Close any open dropdowns when closing the menu
+            if (!isActive) {
+                document.querySelectorAll('.nav-dropdown').forEach(d => {
+                    d.classList.remove('active');
+                });
+            }
+        });
+    }
+
+    // Practice Areas dropdown toggle
+    const navDropdowns = document.querySelectorAll('.nav-dropdown');
+    navDropdowns.forEach(dropdown => {
+        const dropdownLink = dropdown.querySelector('a[href="#"]');
+        if (dropdownLink) {
+            dropdownLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdown.classList.toggle('active');
+            });
+        }
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(e) {
+        const header = document.querySelector('.header');
+        if (header && !header.contains(e.target) && nav && nav.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+
+    // Phone link in nav menu
+    const navPhone = document.querySelector('.nav-phone-item a');
+    if (navPhone) {
+        navPhone.addEventListener('click', closeMobileMenu);
+    }
 });
